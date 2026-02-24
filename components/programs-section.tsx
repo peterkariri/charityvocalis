@@ -1,59 +1,11 @@
-import { Card, CardContent } from "@/components/ui/card"
+import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Mic, Users, GraduationCap, Briefcase, Heart, MessageCircle, ArrowRight } from "lucide-react"
+import { Card, CardContent } from "@/components/ui/card"
+import { ArrowRight } from "lucide-react"
+import { programs } from "@/lib/programs-data"
+import Image from "next/image"
 
 export function ProgramsSection() {
-  const programs = [
-    {
-      icon: Mic,
-      title: "Speak Out Sessions",
-      description:
-        "Safe spaces where girls can share their stories, voice concerns, and practice public speaking in a supportive environment.",
-      color: "bg-primary",
-      textColor: "text-white",
-    },
-    {
-      icon: Users,
-      title: "Mentorship Program",
-      description:
-        "Connect with successful women professionals who provide guidance, support, and real-world insights for career development.",
-      color: "bg-secondary",
-      textColor: "text-secondary-foreground",
-    },
-    {
-      icon: GraduationCap,
-      title: "Scholarship Fund",
-      description:
-        "Financial support for academically talented girls who need help covering school fees, books, and educational materials.",
-      color: "bg-primary",
-      textColor: "text-white",
-    },
-    {
-      icon: Briefcase,
-      title: "Career Guidance",
-      description:
-        "Workshops and seminars that expose girls to various career paths and help them make informed decisions about their future.",
-      color: "bg-secondary",
-      textColor: "text-secondary-foreground",
-    },
-    {
-      icon: Heart,
-      title: "Wellness Support",
-      description:
-        "Mental health resources and counseling services to help girls navigate challenges and build emotional resilience.",
-      color: "bg-primary",
-      textColor: "text-white",
-    },
-    {
-      icon: MessageCircle,
-      title: "Peer Networks",
-      description:
-        "Creating lasting connections between girls across different schools to build a supportive community of change-makers.",
-      color: "bg-secondary",
-      textColor: "text-secondary-foreground",
-    },
-  ]
-
   return (
     <section id="programs" className="py-20 bg-muted/30">
       <div className="container mx-auto px-4">
@@ -76,20 +28,31 @@ export function ProgramsSection() {
           {programs.map((program, index) => (
             <Card
               key={index}
-              className="group hover:shadow-xl transition-all duration-300 border-none bg-white rounded-3xl overflow-hidden"
+              className="group hover:shadow-xl transition-all duration-300 border-none bg-white rounded-3xl overflow-hidden flex flex-col h-full"
             >
-              <CardContent className="p-8">
+              <div className="relative h-48 w-full overflow-hidden">
+                <Image
+                  src={program.placeholderImage}
+                  alt={program.title}
+                  fill
+                  className="object-cover transition-transform duration-500 group-hover:scale-110"
+                />
+                <div className={`absolute inset-0 opacity-20 ${program.color}`} />
+              </div>
+              <CardContent className="p-8 flex flex-col flex-grow">
                 <div
-                  className={`w-16 h-16 ${program.color} rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}
+                  className={`w-12 h-12 ${program.color} rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 -mt-14 relative z-10 shadow-lg`}
                 >
-                  <program.icon className={`w-8 h-8 ${program.textColor}`} />
+                  <program.icon className={`w-6 h-6 ${program.textColor}`} />
                 </div>
                 <h3 className="text-xl font-bold mb-3">{program.title}</h3>
-                <p className="text-muted-foreground mb-6">{program.description}</p>
-                <Button variant="ghost" className="text-primary hover:text-primary/80 p-0 group/btn">
-                  Learn More
-                  <ArrowRight className="w-4 h-4 ml-2 group-hover/btn:translate-x-1 transition-transform" />
-                </Button>
+                <p className="text-muted-foreground mb-6 flex-grow">{program.description}</p>
+                <Link href={`/programs/${program.id}`}>
+                  <Button variant="ghost" className="text-primary hover:text-primary/80 p-0 group/btn">
+                    Learn More
+                    <ArrowRight className="w-4 h-4 ml-2 group-hover/btn:translate-x-1 transition-transform" />
+                  </Button>
+                </Link>
               </CardContent>
             </Card>
           ))}

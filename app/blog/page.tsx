@@ -6,57 +6,57 @@ import { Calendar, User, ArrowRight } from "lucide-react"
 const blogPosts = [
     {
         id: 1,
-        title: "Empowering Rural Schools: A Success Story",
-        excerpt: "How our latest initiative provided textbooks and digital resources to over 500 students in rural Kenya, transforming their learning experience.",
-        author: "Jane Doe",
+        title: "Breaking Barriers: Girls in STEM",
+        excerpt: "How our latest coding bootcamp is empowering young girls in rural Kenya to embrace technology and build future-proof skills.",
+        author: "Amina Ochieng",
         date: "March 15, 2025",
         category: "Education",
-        image: "bg-pink-100", // Placeholder class
+        image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=800&auto=format&fit=crop",
     },
     {
         id: 2,
-        title: "The Power of Mentorship",
-        excerpt: "Meet the mentors who are dedicating their time to guide the next generation of female leaders in technology and business.",
-        author: "John Smith",
+        title: "Dignity Kits: Promoting Hygiene & Confidence",
+        excerpt: "Our Sanitary Towels Drive has distributed over 10,000 kits, ensuring that menstruation never keeps a girl out of class.",
+        author: "Dr. Wanjiku Mwangi",
         date: "March 10, 2025",
-        category: "Mentorship",
-        image: "bg-purple-100",
+        category: "Humanitarian",
+        image: "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?q=80&w=800&auto=format&fit=crop",
     },
     {
         id: 3,
-        title: "Tech Bootcamp 2025 Highlights",
-        excerpt: "A look back at our intensive week-long coding bootcamp where 50 girls built their first web applications.",
-        author: "Sarah Connor",
+        title: "The Ripple Effect of Educating a Girl",
+        excerpt: "An in-depth look at how supporting one girl's education transforms her entire family and community for generations.",
+        author: "Grace Kimani",
         date: "March 5, 2025",
-        category: "Events",
-        image: "bg-blue-100",
+        category: "Empowerment",
+        image: "https://images.unsplash.com/photo-1427504746696-ea5abd7dfe8b?q=80&w=800&auto=format&fit=crop",
     },
     {
         id: 4,
-        title: "Community Health Drive",
-        excerpt: "Providing essential health services and education to families in need, ensuring a wider impact beyond the classroom.",
-        author: "Dr. Emily Blunt",
+        title: "Community Resilience During Drought",
+        excerpt: "How our relief efforts are providing essential food and water security to vulnerable families in arid regions.",
+        author: "Community Team",
         date: "February 28, 2025",
-        category: "Health",
-        image: "bg-green-100",
+        category: "Humanitarian",
+        image: "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?q=80&w=800&auto=format&fit=crop",
     },
     {
         id: 5,
-        title: "Partnering for Change",
-        excerpt: "We are excited to announce our new partnership with Global Tech Giants to bring more resources to our programs.",
-        author: "Michael Ross",
+        title: "Voices of the Future: Student Stories",
+        excerpt: "Hear directly from the scholarship recipients whose dreams are becoming reality thanks to your support.",
+        author: "Faith Njeri",
         date: "February 20, 2025",
-        category: "Partnership",
-        image: "bg-orange-100",
+        category: "Stories",
+        image: "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?q=80&w=800&auto=format&fit=crop",
     },
     {
         id: 6,
-        title: "Alumni Spotlight: Grace's Journey",
-        excerpt: "From a shy student to a confident software engineer, follow Grace's inspiring journey through our Vocalis program.",
-        author: "Grace Ho",
+        title: "Mental Health: A Priority for Young Women",
+        excerpt: "Introducing our new wellness counseling sessions designed to help girls navigate adolescence with mental resilience.",
+        author: "Wellness Team",
         date: "February 15, 2025",
-        category: "Alumni",
-        image: "bg-yellow-100",
+        category: "Health",
+        image: "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?q=80&w=800&auto=format&fit=crop",
     },
 ]
 
@@ -79,10 +79,15 @@ export default function BlogPage() {
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {blogPosts.map((post) => (
                         <Link key={post.id} href={`/blog/${post.id}`} className="block h-full">
-                            <article className="h-full bg-white rounded-2xl shadow-sm border border-border overflow-hidden transition-all duration-300 hover:-translate-y-2 hover:z-10 hover:shadow-[0_10px_40px_-10px_rgba(72,255,145,0.6)] group relative">
-                                <div className={`h-48 ${post.image} relative overflow-hidden`}>
-                                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
-                                    <span className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider text-foreground">
+                            <article className="h-full bg-white rounded-2xl shadow-sm border border-border overflow-hidden transition-all duration-300 hover:-translate-y-2 hover:z-10 hover:shadow-[0_10px_40px_-10px_rgba(72,255,145,0.6)] group relative flex flex-col">
+                                <div className="h-48 relative overflow-hidden">
+                                    <img
+                                        src={post.image}
+                                        alt={post.title}
+                                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                                    />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                                    <span className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider text-foreground shadow-md">
                                         {post.category}
                                     </span>
                                 </div>

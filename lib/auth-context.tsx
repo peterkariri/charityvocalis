@@ -7,14 +7,16 @@ interface User {
     id: string
     name: string
     email: string
-    avatar?: string
+    role?: string
+    image?: string
+    phone?: string
 }
 
 interface AuthContextType {
     user: User | null
     loading: boolean
-    login: (email: string) => Promise<void>
-    loginWithProvider: (provider: string) => Promise<void>
+    login: (email: string, password: string) => Promise<string | null> // Returns error string or null if success
+    register: (name: string, email: string, password: string, phone?: string) => Promise<string | null>
     logout: () => void
     isAuthenticated: boolean
 }
@@ -27,63 +29,87 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const router = useRouter()
 
     useEffect(() => {
-        // Check for existing session
+        // Check for existing session in localStorage (simple persistence for now)
         const storedUser = localStorage.getItem("vocalis_user")
         if (storedUser) {
-            setUser(JSON.parse(storedUser))
+            try {
+                setUser(JSON.parse(storedUser))
+            } catch (e) {
+                console.error("Failed to parse stored user", e)
+                localStorage.removeItem("vocalis_user")
+            }
         }
         setLoading(false)
     }, [])
 
-    const login = async (email: string) => {
+    const login = async (email: string, password: string) => {
         setLoading(true)
-        // Simulate API call
-        await new Promise((resolve) => setTimeout(resolve, 1000))
+        try {
+            const res = await fetch("/api/auth/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email, password }),
+            })
 
-        const mockUser: User = {
-            id: "1",
-            name: email.split("@")[0] || "User",
-            email: email,
-            avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${email}`
+            const data = await res.json()
+
+            if (!res.ok) {
+                setLoading(false)
+                return data.error || "Login failed"
+            }
+
+            const user = data
+            localStorage.setItem("vocalis_user", JSON.stringify(user))
+            setUser(user)
+            setLoading(false)
+            router.push("/dashboard")
+            return null
+        } catch (error) {
+            setLoading(false)
+            return "An unexpected error occurred"
         }
-
-        localStorage.setItem("vocalis_user", JSON.stringify(mockUser))
-        // Set a mock cookie
-        document.cookie = `vocalis_token=mock-jwt-token-for-${mockUser.id}; path=/; max-age=86400`
-
-        setUser(mockUser)
-        setLoading(false)
-        router.push("/dashboard")
     }
 
-    const loginWithProvider = async (provider: string) => {
+    const register = async (name: string, email: string, password: string, phone?: string) => {
         setLoading(true)
-        await new Promise((resolve) => setTimeout(resolve, 1500))
+        try {
+            const res = await fetch("/api/auth/register", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ name, email, password, phone }),
+            })
 
-        const mockUser: User = {
-            id: "2",
-            name: `${provider} User`,
-            email: `user@${provider.toLowerCase()}.com`,
-            avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${provider}`
+            const data = await res.json()
+
+            if (!res.ok) {
+                setLoading(false)
+                return data.error || "Registration failed"
+            }
+
+            // Auto login after register (optional, but good UX)
+            const user = data
+            localStorage.setItem("vocalis_user", JSON.stringify(user))
+            setUser(user)
+            setLoading(false)
+            router.push("/dashboard")
+            return null
+        } catch (error) {
+            setLoading(false)
+            return "An unexpected error occurred"
         }
-
-        localStorage.setItem("vocalis_user", JSON.stringify(mockUser))
-        document.cookie = `vocalis_token=mock-oauth-token-${provider}; path=/; max-age=86400`
-
-        setUser(mockUser)
-        setLoading(false)
-        router.push("/dashboard")
     }
 
     const logout = () => {
         localStorage.removeItem("vocalis_user")
+        // Also clear cookie if possible, but HttpOnly can't be cleared from JS easily unless we hit a logout endpoint
+        // For now, we rely on client-side state
         document.cookie = "vocalis_token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT;"
         setUser(null)
         router.push("/")
     }
 
     return (
-        <AuthContext.Provider value={{ user, loading, login, loginWithProvider, logout, isAuthenticated: !!user }}>
+        <AuthContext.Provider value={{ user, loading, login, register, logout, isAuthenticated: !!user }}>
             {children}
         </AuthContext.Provider>
     )

@@ -15,6 +15,7 @@ model User {
   image         String?
   password      String?
   role          String    @default("user") // "user" or "admin"
+  phone         String?
   accounts      Account[]
   sessions      Session[]
   donations     Donation[]
@@ -59,21 +60,58 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
+model Campaign {
+  id            String   @id @default(cuid())
+  title         String
+  description   String
+  targetAmount  Float
+  raisedAmount  Float    @default(0)
+  imageUrl      String?
+  status        String   @default("active") // active, completed, suspended
+  verified      Boolean  @default(false)
+  startDate     DateTime @default(now())
+  endDate       DateTime?
+  
+  donations     Donation[]
+  impactUpdates ImpactUpdate[]
+  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model ImpactUpdate {
+  id          String   @id @default(cuid())
+  title       String
+  content     String
+  imageUrl    String?
+  publishedAt DateTime @default(now())
+  
+  campaignId  String
+  campaign    Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  
+  createdAt   DateTime @default(now())
+}
+
 model Donation {
   id            String   @id @default(cuid())
   amount        Float
   currency      String   @default("KES")
   status        String   @default("pending") // pending, completed, failed
-  paymentMethod String?
+  paymentMethod String?  // M-Pesa, Card, Bank
   transactionId String?
   
   userId        String?
   user          User?    @relation(fields: [userId], references: [id])
   
+  campaignId    String?
+  campaign      Campaign? @relation(fields: [campaignId], references: [id])
+  
   donorName     String?  // For guest users
   donorEmail    String?  // For guest users
+  donorPhone    String?  // For guest users
   
   createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }
 
 model BlogPost {

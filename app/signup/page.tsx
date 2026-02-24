@@ -8,25 +8,25 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Loader2, ArrowLeft } from "lucide-react"
+import { toast } from "sonner"
 
 export default function SignupPage() {
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
     const [name, setName] = useState("")
-    const { login, loginWithProvider } = useAuth()
+    const { register, loading } = useAuth()
     const [isSubmitting, setIsSubmitting] = useState(false)
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
         setIsSubmitting(true)
-        // For demo, signup just logs you in
-        await login(email)
-        setIsSubmitting(false)
-    }
+        const error = await register(name, email, password)
 
-    const handleSocialLogin = async (provider: string) => {
-        setIsSubmitting(true)
-        await loginWithProvider(provider)
+        if (error) {
+            toast.error(error)
+        } else {
+            toast.success("Account created successfully!")
+        }
         setIsSubmitting(false)
     }
 
@@ -44,24 +44,6 @@ export default function SignupPage() {
                     </CardDescription>
                 </CardHeader>
                 <CardContent className="grid gap-4">
-                    <div className="grid grid-cols-2 gap-6">
-                        <Button variant="outline" onClick={() => handleSocialLogin("Google")}>
-                            Google
-                        </Button>
-                        <Button variant="outline" onClick={() => handleSocialLogin("Github")}>
-                            Github
-                        </Button>
-                    </div>
-                    <div className="relative">
-                        <div className="absolute inset-0 flex items-center">
-                            <span className="w-full border-t" />
-                        </div>
-                        <div className="relative flex justify-center text-xs uppercase">
-                            <span className="bg-background px-2 text-muted-foreground">
-                                Or continue with
-                            </span>
-                        </div>
-                    </div>
                     <form onSubmit={handleSubmit} className="grid gap-4">
                         <div className="grid gap-2">
                             <Label htmlFor="name">Full Name</Label>
@@ -79,7 +61,7 @@ export default function SignupPage() {
                             <Input
                                 id="email"
                                 type="email"
-                                placeholder="m@example.com"
+                                placeholder="name@example.com"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                                 required
